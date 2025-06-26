@@ -16,7 +16,7 @@ if uploaded_file is not None:
     st.subheader("Preview of your data")
     st.dataframe(df)
 
-  except Esception as e:
+  except Exception as e:
     st.error(f"❌File Reading Error: {e}")
 
 else:
