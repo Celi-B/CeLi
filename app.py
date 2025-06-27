@@ -10,7 +10,7 @@ uploaded_file = st.file_uploader ("Choose an excel file", type=["xlsx","xls"])
 if uploaded_file is not None:
     try:
     # Read the Excel file
-    df = pd.read_excel(uploaded_file, engine='openpyxl')
+        df = pd.read_excel(uploaded_file, engine='openpyxl')
 
     # set the columns I want to display
     important_columns = [
