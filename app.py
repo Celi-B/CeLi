@@ -33,19 +33,25 @@ if uploaded_file is not None:
 
     
         if available_columns:
-            # Filter widgets
-            suppliers = df['Supplier'].dropna().unique()
-            spend_categories = df['Spend Category'].dropna().unique()
+            st.subheader("Filter Options")
 
-            selected_suppliers = st.multiselect("Filter by Supplier", options=suppliers, default=suppliers)
-            selected_spend_categories = st.multiselect("Filter by spend Category", option=spend_categories, default=spend_categories)
+            # Get all unique values for filters (unfiltered)
+            all_suppliers = df['Supplier'].dropna().unique()
+            all_categories = df['Spend Category'].dropna().unique()
 
-            # Filter dataframe based on selections
-            filtered_df = df[
-                (df['Supplier'].isin(selected_suppliers)) & 
-                (df['Spend Category'],isin(selected_spend_categories))
-            ]
-            
+            selected_suppliers = st.multiselect("Filter by Supplier (optional)", options=all_suppliers)
+            selected_categories = st.multiselect("Filter by Spend Category (optional)", options=all_categories)
+
+            # Start with full dataframe
+            filtered_df = df
+
+            # Apply filters independently
+            if selected_suppliers:
+                filtered_df = filtered_df[filtered_df['Supplier'].isin(selected_suppliers)]
+
+            if selected_categories:
+                filtered_df = filtered_df[filtered_df['Spend Category'].isin(selected_categories)]
+
             st.subheader("Filtered Data")
             st.dataframe(filtered_df[available_columns])
         else:
