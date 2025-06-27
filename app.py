@@ -37,7 +37,7 @@ if uploaded_file is not None:
     else:
     st.warning("None of the selected columns were found in the uploaded file.")
 
-  except Exception as e:
+except Exception as e:
     st.error(f"❌File Reading Error: {e}")
 
 
