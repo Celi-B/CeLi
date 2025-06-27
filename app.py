@@ -10,19 +10,34 @@ uploaded_file = st.file_uploader ("Choose an excel file", type=["xlsx","xls"])
 if uploaded_file is not None:
   try:
     # Read the Excel file
-    df = pd.read_excel(uploaded_file)
+    df = pd.read_excel(uploaded_file, engine='openpyxl')
 
-    # show the data
-    st.subheader("Preview of your data")
-    st.dataframe(df)
+    # set the columns I want to display
+    important_columns = [
+      'Project', 
+      'Supplier', 
+      "Supplier's Invoice Number",
+      'Invoice Date', 
+      'Invoice Status', 
+      'Spend Category', 
+      'Total Invoice Amount (reporting currency)', 
+      'Line Tax Amount', 
+      'Line Extended Amount', 
+      'Currency', 
+      'Document Payment Status', 
+      'Payment Date'
+    ]
+
+    # check that the selected columns exist in the file
+    available_columns = [col for col in important_columns if col in df.columns]
+
+    if available_columns:
+      st.subheader("selected important columns")
+      st.dataframe(df[available_columns])
+    else:
+    st.warning("None of the selected columns were found in the uploaded file.")
 
   except Exception as e:
     st.error(f"❌File Reading Error: {e}")
 
-else:
-  st.info("Please upload an excel file to get started.")
 
-
-# st.write("Hello, the World only for me merely working on my own logic!")
-# slider_value = st.slider("Pick your favorite number",0,100)
-# st.write("Your favorite number is", slider_value)
