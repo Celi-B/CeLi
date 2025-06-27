@@ -8,7 +8,7 @@ uploaded_file = st.file_uploader ("Choose an excel file", type=["xlsx","xls"])
 
 #if a file is uploaded
 if uploaded_file is not None:
-  try:
+    try:
     # Read the Excel file
     df = pd.read_excel(uploaded_file, engine='openpyxl')
 
