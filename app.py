@@ -9,10 +9,10 @@ uploaded_file = st.file_uploader ("Choose an excel file", type=["xlsx","xls"])
 #if a file is uploaded
 if uploaded_file is not None:
     try:
-    # Read the Excel file
+        # Read the Excel file
         df = pd.read_excel(uploaded_file, engine='openpyxl')
 
-    # set the columns I want to display
+        # set the columns I want to display
         important_columns = [
             'Project', 
             'Supplier', 
@@ -28,7 +28,7 @@ if uploaded_file is not None:
             'Payment Date'
         ]
 
-    # check that the selected columns exist in the file
+        # check that the selected columns exist in the file
         available_columns = [col for col in important_columns if col in df.columns]
 
     
