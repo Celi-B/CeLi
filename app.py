@@ -36,8 +36,8 @@ if uploaded_file is not None:
             st.subheader("Filter Options")
 
             # Get all unique values for filters (unfiltered)
-            all_suppliers = df['Supplier'].dropna().unique()
-            all_categories = df['Spend Category'].dropna().unique()
+            all_suppliers = sorted(df['Supplier'].dropna().unique())
+            all_categories = sorted(df['Spend Category'].dropna().unique())
 
             selected_suppliers = st.multiselect("Filter by Supplier (optional)", options=all_suppliers)
             selected_categories = st.multiselect("Filter by Spend Category (optional)", options=all_categories)
