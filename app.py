@@ -33,8 +33,21 @@ if uploaded_file is not None:
 
     
         if available_columns:
-            st.subheader("selected important columns")
-            st.dataframe(df[available_columns])
+            # Filter widgets
+            suppliers = df['Supplier'].dropna().unique()
+            spend_categories = df['Spend Category'].dropna().unique()
+
+            selected_suppliers = st.multiselect("Filter by Supplier", options=suppliers, default=suppliers)
+            selected_spend_categories = st.multiselect("Filter by spend Category", option=spend_categories, default=spend_categories)
+
+            # Filter dataframe based on selections
+            filtered_df = df[
+                (df['Supplier'].isin(selected_suppliers)) & 
+                (df['Spend Category'],isin(selected_spend_categories))
+            ]
+            
+            st.subheader("Filtered Data")
+            st.dataframe(filtered_df[available_columns])
         else:
             st.warning("None of the selected columns were found in the uploaded file.")
 
