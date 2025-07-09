@@ -69,7 +69,7 @@ if uploaded_file is not None:
         )
         updated_df.to_csv(DATA_FILE, index=False)
 
-        st.success(f"✅ {len(filtered_new_df)}개의 새로운 행이 저장되었습니다.")
+        st.success(f"✅ {len(filtered_new_df)}columns are saved.")
         st.subheader("Newly Added Data")
         st.dataframe(filtered_new_df)
 
