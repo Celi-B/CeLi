@@ -32,52 +32,64 @@ if uploaded_file is not None:
             'Payment Date'
         ]
 
-               #key_columns의 모든 항목이 new_df.columns 안에 다 들어 있느냐?
-        if not set(key_columns).issubset(new_df.columns): #key_columns에 있는 모든 컬럼들이 new_df.columns에 포함되지 않았다면
-            st.error("❌ there is no enough columns for duplication check 중복체크를 위한 필수 컬럼이 부족합니다.")
+        # 실제 존재하는 키 컬럼만 추출
+        existing_keys = [col for col in key_columns if col in new_df.columns]
+        missing_keys = list(set(key_columns) - set(existing_keys))
 
+        if missing_keys:
+            st.warning(f"⚠️ 병합을 위한 컬럼 중 누락된 항목: {', '.join(missing_keys)}")
 
-        
-        else:
-            #기존 데이터 불러오기 (없으면 빈 DF)
-            if os.path.exists(DATA_FILE):
-                old_df = pd.read_csv(DATA_FILE)
+        if not existing_keys:
+            st.error("❌ 병합 할 수 있는 컬럼이 없습니다.")
+            st.stop()
+
+        # 병합 키 생성
+        new_df['__merge_key__'] = new_df[existing_keys].astype(str).agg('|'.join, axis=1)
+
+        # 기존 데이터 처리
+        if os.path.exists(DATA_FILE):
+            old_df = pd.read_csv(DATA_FILE)
+            existing_keys_old = [col for col in existing_keys if col in old_df.columns]
+            if existing_keys_old:
+                old_df['__merge_key__'] = old_df[existing_keys_old].astype(str).agg('|'.join, axis=1)
             else:
-                old_df = pd.DataFrame(columns=new_df.columns)
+                old_df['__merge_key__'] = ''
+        else:
+            old_df = pd.DataFrame(columns=new_df.columns)
+            old_df['__merge_key__'] = ''
 
 
-            # 비교 대상 키 만들기
-            new_df['__merge_key__'] = new_df[key_columns].astype(str).agg('|'.join, axis=1)
-            old_df['__merge_key__'] = old_df[key_columns].astype(str).agg('|'.join, axis=1)
+        #새로운 행만 필터링
+        filtered_new_df = new_df[~new_df['__merge_key__'].isin(old_df['__merge_key__'])].copy()
 
-            #새로운 행만 필터링
-            filtered_new_df = new_df[~new_df['__merge_key__'].isin(old_df['__merge_key__'])].copy()
+        # 병합 후 저장
+        updated_df = pd.concat(
+            [old_df.drop(columns='__merge_key__'), filtered_new_df.drop(columns='__merge_key__')], 
+            ignore_index=True
+        )
+        updated_df.to_csv(DATA_FILE, index=False)
 
-            # 병합 후 저장
-            updated_df = pd.concat([old_df.drop(columns='__merge_key__'), filtered_new_df.drop(columns='__merge_key__')], ignore_index=True)
-            updated_df.to_csv(DATA_FILE, index=False)
-
-            st.success(f"✅ {len(filtered_new_df)}개의 새로운 행이 저장되었습니다.")
-            st.subheader("Newly Added Data")
-            st.dataframe(filtered_new_df)
+        st.success(f"✅ {len(filtered_new_df)}개의 새로운 행이 저장되었습니다.")
+        st.subheader("Newly Added Data")
+        st.dataframe(filtered_new_df)
 
         
         # check that the selected columns exist in the file
-        available_columns = [col for col in important_columns if col in df.columns]
+        available_columns = [col for col in key_columns if col in new_df.columns]
 
     
         if available_columns:
             st.subheader("Filter Options")
 
             # Get all unique values for filters (unfiltered)
-            all_suppliers = sorted(df['Supplier'].dropna().unique())
-            all_categories = sorted(df['Spend Category'].dropna().unique())
+            all_suppliers = sorted(new_df['Supplier'].dropna().unique())
+            all_categories = sorted(new_df['Spend Category'].dropna().unique())
 
             selected_suppliers = st.multiselect("Filter by Supplier (optional)", options=all_suppliers)
             selected_categories = st.multiselect("Filter by Spend Category (optional)", options=all_categories)
 
             # Start with full dataframe
-            filtered_df = df
+            filtered_df = new_df.copy()
 
             # Apply filters independently
             if selected_suppliers:
