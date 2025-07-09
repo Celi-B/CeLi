@@ -83,10 +83,10 @@ if uploaded_file is not None:
 
             # Get all unique values for filters (unfiltered)
             all_suppliers = sorted(new_df['Supplier'].dropna().unique())
-#            all_categories = sorted(new_df['Spend Category'].dropna().unique())
+            all_categories = sorted(new_df['Document Payment Status'].dropna().unique())
 
             selected_suppliers = st.multiselect("Filter by Supplier (optional)", options=all_suppliers)
-#            selected_categories = st.multiselect("Filter by Spend Category (optional)", options=all_categories)
+            selected_categories = st.multiselect("Filter by Document Payment Status (optional)", options=all_Document Payment Status)
 
             # Start with full dataframe
             filtered_df = new_df.copy()
@@ -95,8 +95,8 @@ if uploaded_file is not None:
             if selected_suppliers:
                 filtered_df = filtered_df[filtered_df['Supplier'].isin(selected_suppliers)]
 
-#            if selected_categories:
-#               filtered_df = filtered_df[filtered_df['Spend Category'].isin(selected_categories)]
+            if selected_categories:
+               filtered_df = filtered_df[filtered_df['Document Payment Status'].isin(selected_Document Payment Status)]
 
             st.subheader("Filtered Data")
             st.dataframe(filtered_df[available_columns])
