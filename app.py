@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import OS
+import os
 
 st.title("Payment Check App")
 
