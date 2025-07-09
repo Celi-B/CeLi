@@ -88,7 +88,7 @@ if uploaded_file is not None:
             selected_suppliers = st.multiselect("Filter by Supplier (optional)", options=all_suppliers)
             selected_document_payment_status = st.multiselect(
                 "Filter by Document Payment Status (optional)", 
-                options=all_Document_Payment_Status
+                options=all_document_payment_status
             )
 
             # Start with full dataframe
