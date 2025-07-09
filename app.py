@@ -98,7 +98,7 @@ if uploaded_file is not None:
             if selected_suppliers:
                 filtered_df = filtered_df[filtered_df['Supplier'].isin(selected_suppliers)]
 
-            if selected_d:
+            if selected_document_payment_status:
                filtered_df = filtered_df[filtered_df['Document Payment Status'].isin(selected_Document_Payment_Status)]
 
             st.subheader("Filtered Data")
